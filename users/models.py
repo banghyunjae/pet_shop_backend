@@ -6,8 +6,6 @@ class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
             raise ValueError("이메일은 필수입니다.")
-        if not password:
-            raise ValueError("비밀번호는 필수입니다.")
 
         user = self.model(email=self.normalize_email(email))
         user.set_password(password)
