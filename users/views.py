@@ -63,3 +63,37 @@ class UserDetailAPIView(APIView):
             {"message": "회원정보가 삭제되었습니다.", "code": status.HTTP_204_NO_CONTENT},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+class UserFollowAPIView(APIView):
+    # 팔로우
+    def get_object(self, pk):
+        return get_object_or_404(User, pk=pk)
+
+    def post(self, request, pk):
+        user = self.get_object(pk)
+        user.following.add(request.user)
+        return Response(
+            {"message": "팔로우가 완료되었습니다.", "code": status.HTTP_200_OK},
+            status=status.HTTP_200_OK,
+        )
+
+    # 언팔로우
+    def delete(self, request, pk):
+        user = self.get_object(pk)
+        user.following.remove(request.user)
+        return Response(
+            {"message": "언팔로우가 완료되었습니다.", "code": status.HTTP_204_NO_CONTENT},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+class UserFollowListAPIView(APIView):
+    # 팔로잉 리스트
+    def get_object(self, pk):
+        return get_object_or_404(User, pk=pk)
+
+    def get(self, request, pk):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user.following, many=True)
+        return Response(serializer.data)
